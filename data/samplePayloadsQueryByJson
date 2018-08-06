@@ -1,0 +1,20 @@
+{'name.common' : 'Pakistan'}
+---------------------------------
+{
+	area : {$gt:  11123456}
+}
+---------------------------------
+{
+	 $or:[{"name.common": "Pakistan"}, {"name.common": "Iran"}]
+}
+---------------------------------
+{
+	 {"name.common":   /tan$/ }
+}
+---------------------------------
+first create index: db.countries.createIndex({latlng:"2dsphere"});
+{
+    latlng :  {$near :[30, 70], $maxDistance: 111.05}
+}
+---------------------------------
+---------------------------------

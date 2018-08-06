@@ -14,10 +14,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,6 +55,12 @@ public class CountriesController {
         return countries;
     }
 
+//    @GetMapping(value="/getBiggestByRegion")
+//    public List getBiggestByRegion () {
+//        List byRegion = countriesRepository.findByGroupByRegionOrderByAreaDesc();
+//        return byRegion;
+//    }
+
 
     @GetMapping (value = "/nativeQuery")
     public String getNativeQuery () {
@@ -85,5 +88,9 @@ public class CountriesController {
         return new Long(countriesRepository.count()).toString();
     }
 
-
+    @PostMapping(value= "/queryByJson")
+    public List<Country> nativeJson (@RequestBody String json) {
+        List<Country> countries = mongoOperations.find(new BasicQuery(json), Country.class);
+        return countries;
+    }
 }
