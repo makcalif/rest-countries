@@ -2,6 +2,8 @@ package com.world.restcountries;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
+import com.world.restcountries.model.Country;
+import com.world.restcountries.model.Name;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -12,7 +14,7 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import de.flapdoodle.embed.process.runtime.Network;
 import junit.framework.TestCase;
 import org.json.JSONException;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,22 +50,22 @@ public class CountriesIT extends TestCase {
     TestRestTemplate restTemplate = new TestRestTemplate();
     HttpHeaders headers = new HttpHeaders();
 
-    @Override
-    protected void setUp() throws Exception {
+    //@Before
+    public   void before() throws Exception {
         _mongodExe = starter.prepare(new MongodConfigBuilder()
                 .version(Version.Main.PRODUCTION)
                 .net(new Net("localhost", mongoPort, Network.localhostIsIPv6()))
                 .build());
         _mongod = _mongodExe.start();
 
-        super.setUp();
+        //super.setUp();
 
         _mongo = new MongoClient("localhost", mongoPort);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    //@After
+    public   void after() throws Exception {
+        //super.tearDown();
 
         _mongod.stop();
         _mongodExe.stop();
@@ -110,7 +112,7 @@ public class CountriesIT extends TestCase {
         HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/Pakistan"),
+                createURLWithPort("/static"),
                 HttpMethod.GET, entity, String.class);
 
         String expected = "[\n" +
@@ -127,6 +129,39 @@ public class CountriesIT extends TestCase {
                 "]";
 
         JSONAssert.assertEquals(expected, response.getBody(), false);
+
+    }
+
+    @Test
+    public void addCountry() {
+        Country country = new Country();
+        Name name = new Name();
+        name.setCommon("timbuctu");
+        name.setOfficial("official");
+        country.setName(name);
+
+        HttpEntity<Country> entity = new HttpEntity<Country>(country, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("/"),
+                HttpMethod.POST, entity, String.class);
+
+        //String actual = response.getHeaders().get(HttpHeaders.LOCATION).get(0);
+
+        HttpEntity<String> verify = new HttpEntity<String>(null, headers);
+
+        ResponseEntity<String> verifyResponse = restTemplate.exchange(
+                createURLWithPort("/timbuctu"),
+                HttpMethod.GET, entity, String.class);
+
+        LOGGER.info(verifyResponse.getBody());
+
+
+        ResponseEntity<String> verifyResponse2 = restTemplate.exchange(
+                createURLWithPort("/static"),
+                HttpMethod.GET, entity, String.class);
+
+        LOGGER.info(verifyResponse2.getBody());
 
     }
 }

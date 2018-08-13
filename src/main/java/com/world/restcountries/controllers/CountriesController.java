@@ -33,16 +33,16 @@ public class CountriesController {
     @Autowired
     MongoTemplate mongoTemplate;
 
-    @GetMapping (value = "/static")
-    public List<Country> getStatic() {
-        Country country = new Country();
-        Name name = new Name();
-        name.setCommon("static");
-        name.setOfficial("official");
-        country.setName(name);
-
-        return Arrays.asList(country);
-    }
+//    @GetMapping (value = "/static")
+//    public List<Country> getStatic() {
+//        Country country = new Country();
+//        Name name = new Name();
+//        name.setCommon("static");
+//        name.setOfficial("official");
+//        country.setName(name);
+//
+//        return Arrays.asList(country);
+//    }
 
     @GetMapping (value = "/{name}")
     public List<Country> getCountryByName(@PathVariable String name) {
@@ -105,5 +105,10 @@ public class CountriesController {
     public List<Country> nativeJson (@RequestBody String json) {
         List<Country> countries = mongoOperations.find(new BasicQuery(json), Country.class);
         return countries;
+    }
+
+    @PostMapping
+    public Country save(@RequestBody Country country) {
+        return countriesRepository.save(country);
     }
 }

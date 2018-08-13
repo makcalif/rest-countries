@@ -38,5 +38,6 @@ public interface CountriesRepository extends MongoRepository<Country, String>{
     @Override
     long count();
 
-
+    @Override
+    Country save(Country country);
 }
