@@ -1,6 +1,7 @@
 package com.world.restcountries.controllers;
 
 import com.world.restcountries.model.Country;
+import com.world.restcountries.model.Name;
 import com.world.restcountries.repository.CountriesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -30,6 +32,17 @@ public class CountriesController {
 
     @Autowired
     MongoTemplate mongoTemplate;
+
+    @GetMapping (value = "/static")
+    public List<Country> getStatic() {
+        Country country = new Country();
+        Name name = new Name();
+        name.setCommon("static");
+        name.setOfficial("official");
+        country.setName(name);
+
+        return Arrays.asList(country);
+    }
 
     @GetMapping (value = "/{name}")
     public List<Country> getCountryByName(@PathVariable String name) {

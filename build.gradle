@@ -7,13 +7,19 @@ buildscript {
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("gradle.plugin.com.sourcemuse.gradle.plugin:GradleMongoPlugin:1.0.6")
 	}
 }
+plugins {
+	id 'com.sourcemuse.mongo' version '1.0.6' apply false
+}
+
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'com.sourcemuse.mongo'
 
 group = 'com.world'
 version = '0.0.1-SNAPSHOT'
@@ -28,4 +34,15 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-data-mongodb')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile('de.flapdoodle.embed:de.flapdoodle.embed.mongo')
+	//testCompile "gradle.plugin.com.sourcemuse.gradle.plugin:GradleMongoPlugin:1.0.6"
+}
+
+task integrationTest(type: Test) {
+	runWithMongoDb = true
+}
+
+mongo {
+	port 37017
+	logging 'console'
 }
